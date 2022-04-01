@@ -4,9 +4,13 @@ public class Main {
 
     public static void main(String[] args) {
 
-        Server server = new Server(2);
-        server.startServer();
+        if(args.length != 1){
+            System.out.println("Usage: java Main [Max Players] e é se queres");
+        }
 
+        Server server;
+        server = new Server(Integer.parseInt(args[0]));
+        server.startServer();
 
     }
 }

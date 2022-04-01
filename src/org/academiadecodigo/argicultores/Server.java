@@ -12,22 +12,19 @@ import java.util.List;
 
 public class Server {
 
+    public static final String TEXT_RESET = "\u001B[0m";
+    public static final String TEXT_RED = "\u001B[31m";
     private ServerSocket serverSocket;
     private Socket playerSocket;
     private int maxPlayerCount;
     private int playerCount;
+    private int playerReady;
     private List<Player> players;
     private boolean victory;
     private BufferedWriter bw;
-
     public static final int PORT = 4020;
-    private boolean arePlayersReady;
-    private boolean[] playersReady;
-
 
     public Server(int maxPlayerCount) {
-
-        playersReady = new boolean[maxPlayerCount +1];
 
         try {
 
@@ -39,13 +36,13 @@ public class Server {
 
         this.maxPlayerCount = maxPlayerCount;
         playerCount = 0;
-        players = Collections.synchronizedList(new ArrayList<Player>());
+        players = new ArrayList<Player>();
     }
 
 
-    public synchronized void startServer(){
+    public void startServer() {
 
-        while(serverSocket.isBound() && playerCount < maxPlayerCount){
+        while (serverSocket.isBound() && playerCount < maxPlayerCount) {
 
             try {
                 playerSocket = serverSocket.accept();
@@ -54,35 +51,39 @@ public class Server {
                 bw.write("Player " + playerCount + " connected");
                 bw.newLine();
                 bw.flush();
-                Player p = new Player(playerSocket, "Player " + playerCount, this, players);
-                //players.add(p);
-                Thread tr = new Thread(p);
-                tr.start();
+                Player p = new Player(playerSocket, "Player " + playerCount, this);
+                players.add(p);
 
             } catch (IOException e) {
                 e.printStackTrace();
             }
-
         }
 
-
-
-
-
+        for(Player p: players){
+            p.start();
         }
+    }
 
-        //players.get(0).getPlayerInterface().gameInterface();
-        //players.get(1).getPlayerInterface().gameInterface();
-        //namesReady();
-
-
-    public void gameOver(){
-        for (Player p: players) {
+    public void gameOver(String userName) {
+        for (Player p : players) {
             BufferedWriter bw = p.getBw();
 
             try {
+
+                if (userName != p.getPlayerInterface().getPlayerUsername()) {
+                    bw.write("\n\n\n" +
+                            "\n" +
+                            "██████╗░███████╗███████╗███████╗░█████╗░████████╗\n" +
+                            "██╔══██╗██╔════╝██╔════╝██╔════╝██╔══██╗╚══██╔══╝\n" +
+                            "██║░░██║█████╗░░█████╗░░█████╗░░███████║░░░██║░░░\n" +
+                            "██║░░██║██╔══╝░░██╔══╝░░██╔══╝░░██╔══██║░░░██║░░░\n" +
+                            "██████╔╝███████╗██║░░░░░███████╗██║░░██║░░░██║░░░\n" +
+                            "╚═════╝░╚══════╝╚═╝░░░░░╚══════╝╚═╝░░╚═╝░░░╚═╝░░░");
+                    bw.newLine();
+                    bw.flush();
+                }
                 bw.newLine();
-                bw.write("bye bye");
+                bw.write("\nBow for the king " + TEXT_RED + userName + TEXT_RESET + "!\n");
                 bw.newLine();
                 bw.flush();
                 p.close();
@@ -93,38 +94,28 @@ public class Server {
         }
     }
 
-    public void checkIn(){
-
-       playersReady[playerCount] = true;
-
+    public synchronized void addReadyPlayer(){
+        this.playerReady++;
+        notifyAll();
     }
 
-    /*public boolean isAllPlayersReady(){
-        for (int i = 0; i < maxPlayerCount; i++) {
-            if(!playersReady[i]){
-                return false;
-            }
-        }
-        return true;
-    }*/
+    public synchronized void setVictory() {
+        this.victory = true;
+    }
 
-    public void namesReady(){
+    public synchronized boolean isVictory() {
+        return victory;
+    }
+    public synchronized void arePlayersReady() {
 
-        while(players.size() < maxPlayerCount){
+        if (playerReady < maxPlayerCount) {
+
             try {
                 wait();
+
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
         }
-        //notifyAll();
-    }
-
-    public void setVictory() {
-        this.victory = true;
-    }
-
-    public boolean isVictory() {
-        return victory;
     }
 }
