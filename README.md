@@ -15,3 +15,9 @@ After a long discuss we decided to create a game to test the math skills of the 
 We implemented features one by one, (multi threading, concorrention, game logic and user interface) mainly in pair programming, with extra details being coded individually.
 
 //Tech && Methodologies Java 7, OOP, Prompt View Library, IntelliJ IDEA, Apache Ant, Git, Netcat.
+
+//Gameplay Example
+  
+<div align="center">
+  ![Screen Shot 2022-04-02 at 14 52 25](https://user-images.githubusercontent.com/102623822/161386445-258540c7-15e6-4475-a3af-2ae89f98dd3c.png)
+  </div>
