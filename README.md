@@ -14,4 +14,4 @@ After a long discuss we decided to create a game to test the math skills of the 
 
 We implemented features one by one, (multi threading, concorrention, game logic and user interface) mainly in pair programming, with extra details being coded individually.
 
-//Tech && Methodologies Java 7, OOP, Prompt Library, IntelliJ IDEA, Apache Ant, Git, Netcat.
+//Tech && Methodologies Java 7, OOP, Prompt View Library, IntelliJ IDEA, Apache Ant, Git, Netcat.
